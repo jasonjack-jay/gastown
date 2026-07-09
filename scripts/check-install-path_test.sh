@@ -34,6 +34,12 @@ run_check() {
     check-install-path INSTALL_DIR="$INSTALL_DIR" 2>&1
 }
 
+run_check_default_install_dir() {
+  local path_value="$1"
+  env HOME="$TMPDIR/home" PATH="$path_value" "$MAKE_BIN" --no-print-directory -C "$REPO_ROOT" \
+    check-install-path 2>&1
+}
+
 assert_empty() {
   local test_name="$1"
   local output="$2"
@@ -77,6 +83,11 @@ cleanup
 setup_bins
 output="$(run_check "$BREW_DIR:$INSTALL_DIR:$OTHER_DIR:$SYSTEM_PATH")"
 assert_warns "warns when earlier Homebrew-style gt shadows install" "$output" "$BREW_DIR/gt"
+cleanup
+
+setup_bins
+output="$(run_check_default_install_dir "$BREW_DIR:$INSTALL_DIR:$OTHER_DIR:$SYSTEM_PATH")"
+assert_empty "defaults install dir to active gt path" "$output"
 cleanup
 
 echo "Results: $PASS passed, $FAIL failed"

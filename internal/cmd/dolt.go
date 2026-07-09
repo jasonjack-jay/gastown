@@ -131,6 +131,8 @@ SIGQUIT, so default diagnostics gather process metadata and recent logs only.`,
 	RunE: runDoltDump,
 }
 
+var doltDumpIsRunning = doltserver.IsRunning
+
 var doltSQLCmd = &cobra.Command{
 	Use:   "sql",
 	Short: "Open Dolt SQL shell",
@@ -836,7 +838,7 @@ func runDoltDump(cmd *cobra.Command, args []string) error {
 		return fmt.Errorf("not in a Gas Town workspace: %w", err)
 	}
 
-	running, pid, err := doltserver.IsRunning(townRoot)
+	running, pid, err := doltDumpIsRunning(townRoot)
 	if err != nil {
 		return fmt.Errorf("checking server status: %w", err)
 	}

@@ -3,7 +3,9 @@
 BINARY := gt
 BINARY_DESKTOP := gt-desktop
 BUILD_DIR := .
-INSTALL_DIR := $(HOME)/.local/bin
+ACTIVE_BINARY := $(shell command -v $(BINARY) 2>/dev/null || true)
+DEFAULT_INSTALL_DIR := $(shell if [ -n "$(ACTIVE_BINARY)" ]; then dirname "$(ACTIVE_BINARY)"; else printf '%s/.local/bin' "$$HOME"; fi)
+INSTALL_DIR ?= $(DEFAULT_INSTALL_DIR)
 E2E_IMAGE ?= gastown-test
 E2E_BUILD_FLAGS ?=
 E2E_RUN_FLAGS ?= --rm
